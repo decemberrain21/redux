@@ -1,74 +1,39 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import devToolsEnhancer from 'remote-redux-devtools';
-var Redux = require("redux");
+const FileUpload = require('react-fileupload');
 
-// reducer
-const auth = function(state = {status: 'logged out', value: 'guest'}, action) {
-  switch (action.type) {
-    case 'LOGIN':
-      return Object.assign({}, state, {
-        status: 'logged in',
-        value: action.value
-      })
-    case 'LOGOUT':
-      return Object.assign({}, state, {
-        status: 'logged out',
-        value: action.value
-      })
-    default:
-      return state;
-  }
-}
 
-// store
-const { createStore } = Redux;
-const store = createStore(auth, devToolsEnhancer());
-
-// react component
-var Auth = React.createClass({
-  handleLogin: function() {
-    let username = this.refs.username.value;
-    // dispatch action
-    store.dispatch({
-        type: 'LOGIN',
-      value: username
-    });
-  },
-  handleLogout: function() {
-    // dispatch action
-    store.dispatch({
-        type: 'LOGOUT',
-      value: 'guest'
-    });
-    this.refs.username.value = '';
-  },
+var Test = React.createClass({
+  
   render: function() {
-    let button;
-    console.log(this.props.state.status);
-    if(this.props.state.status === 'logged in') {
-        button = <button onClick={this.handleLogout}>Log out</button>;  
-    } else {
-        button = <input type="button" value="Login" onClick={this.handleLogin} />
-    };
-    
+    /*set properties*/
+    const options={
+        baseUrl:'/',
+        chooseFile : function(files){
+          //document.getElementById("divfile").style.visibility = "hidden"; 
+          document.getElementById("divfile").innerHTML = "Uploading...";
+        console.log('you choose',typeof files == 'string' ? files : files[0].name)
+    },
+    }
+    /*Use FileUpload with options*/
+    /*Set two dom with ref*/
     return (
-      <div>
-       <input type="text" ref="username" />
-                {button} 
-       <h1>Current state is {this.props.state.status + ' as ' + this.props.state.value}</h1>
-      </div>
-    );
+        <div id="divfile">
+        <FileUpload options={options} >
+            <button ref="chooseBtn" className="custombtn">SelectImage</button>
+        </FileUpload>
+        </div>
+    )      
   }
 });
-
 const render = function() {
+ 
+  /* Use ReactUploadFile with options */
+  /* Custom your buttons */
+ 
   ReactDOM.render(
-    <Auth state={store.getState()}
-    />,
+    <Test/>,
     document.getElementById('root')
   );
 };
-
-store.subscribe(render);
 render();
